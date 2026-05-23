@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CB350 QuizHub — Sign In</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background: #0A0C10;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      color: #ECE9E3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient background glows */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 900px 600px at 20% -10%, rgba(96,165,250,0.09) 0%, transparent 60%),
+        radial-gradient(ellipse 700px 600px at 85% 100%, rgba(244,114,182,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 500px 400px at 60% 50%, rgba(16,185,129,0.03) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Subtle grid pattern */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+      padding: 1.5rem;
+    }
+
+    /* ── Logo bar ── */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2.5rem;
+      justify-content: center;
+    }
+
+    .logo-mark {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 900;
+      color: #0A0C10;
+      letter-spacing: -1px;
+      box-shadow: 0 0 0 1px rgba(96,165,250,0.3), 0 8px 24px rgba(96,165,250,0.2);
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      color: #ECE9E3;
+    }
+
+    .logo-text em {
+      color: #60A5FA;
+      font-style: normal;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 2.25rem 2rem;
+      backdrop-filter: blur(20px);
+    }
+
+    .card-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #ECE9E3;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .card-sub {
+      font-size: 14px;
+      color: rgba(236,233,227,0.45);
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+
+    .card-sub strong {
+      color: rgba(236,233,227,0.65);
+      font-weight: 600;
+    }
+
+    /* ── Form fields ── */
+    .field {
+      margin-bottom: 1.25rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: rgba(236,233,227,0.5);
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      font-size: 15px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: #ECE9E3;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="email"]::placeholder,
+    input[type="password"]::placeholder {
+      color: rgba(236,233,227,0.22);
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: rgba(96,165,250,0.6);
+      background: rgba(96,165,250,0.06);
+      box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+    }
+
+    /* Password toggle */
+    .pass-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: rgba(236,233,227,0.35);
+      transition: color 0.15s;
+      display: flex;
+      align-items: center;
+    }
+    .pass-toggle:hover { color: rgba(236,233,227,0.7); }
+
+    /* ── Error message ── */
+    .error-msg {
+      display: none;
+      align-items: center;
+      gap: 9px;
+      padding: 11px 14px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #FCA5A5;
+      margin-bottom: 1.25rem;
+    }
+
+    .error-msg.show { display: flex; }
+
+    /* ── Sign in button ── */
+    .btn-signin {
+      width: 100%;
+      padding: 13.5px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0.2px;
+      background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+      color: #0A0C10;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(96,165,250,0.3);
+      margin-top: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-signin:hover {
+      opacity: 0.92;
+      box-shadow: 0 6px 28px rgba(96,165,250,0.4);
+    }
+
+    .btn-signin:active {
+      transform: scale(0.98);
+    }
+
+    /* ── Course badge ── */
+    .course-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .course-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #60A5FA;
+      opacity: 0.5;
+    }
+
+    .course-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(236,233,227,0.3);
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Result screen ── */
+    .result-card {
+      display: none;
+      text-align: center;
+    }
+
+    .role-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 32px;
+    }
+
+    .role-icon-wrap.tutor-icon {
+      background: rgba(96,165,250,0.15);
+      border: 1px solid rgba(96,165,250,0.25);
+      box-shadow: 0 0 32px rgba(96,165,250,0.1);
+    }
+
+    .role-icon-wrap.student-icon {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.22);
+      box-shadow: 0 0 32px rgba(16,185,129,0.1);
+    }
+
+    .role-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .role-pill.tutor { background: rgba(96,165,250,0.15); color: #93C5FD; border: 1px solid rgba(96,165,250,0.25); }
+    .role-pill.student { background: rgba(16,185,129,0.12); color: #6EE7B7; border: 1px solid rgba(16,185,129,0.22); }
+
+    .result-name {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ECE9E3;
+      letter-spacing: -0.4px;
+      margin-bottom: 8px;
+    }
+
+    .result-desc {
+      font-size: 14px;
+      color: rgba(236,233,227,0.45);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .btn-portal {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13.5px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      text-decoration: none;
+      margin-bottom: 0.75rem;
+    }
+
+    .btn-portal.tutor-btn {
+      background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+      color: #0A0C10;
+      box-shadow: 0 4px 20px rgba(96,165,250,0.3);
+    }
+
+    .btn-portal.student-btn {
+      background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+      color: #0A0C10;
+      box-shadow: 0 4px 20px rgba(16,185,129,0.25);
+    }
+
+    .btn-portal:hover { opacity: 0.9; }
+    .btn-portal:active { transform: scale(0.98); }
+
+    .btn-back {
+      background: none;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(236,233,227,0.3);
+      cursor: pointer;
+      padding: 8px;
+      transition: color 0.15s;
+      width: 100%;
+      margin-top: 0.25rem;
+    }
+    .btn-back:hover { color: rgba(236,233,227,0.6); }
+
+    /* ── Fade-in animation ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page { animation: fadeUp 0.45s ease both; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="logo">
+      <div class="logo-mark">Q</div>
+      <div class="logo-text">Quiz<em>Hub</em></div>
+    </div>
+
+    <!-- ── Login card ── -->
+    <div class="card" id="loginCard">
+      <div class="card-title">Welcome back</div>
+      <div class="card-sub">Sign in to access your portal · <strong>CB350</strong></div>
+
+      <div class="error-msg" id="errMsg">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="errText">Error message</span>
+      </div>
+
+      <div class="field">
+        <label for="emailIn">Email address</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="18" height="18" fill="none" stroke="#ECE9E3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+          <input type="email" id="emailIn" placeholder="your@email.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="passIn">Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="18" height="18" fill="none" stroke="#ECE9E3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="passIn" placeholder="Enter your password" autocomplete="current-password" />
+          <button class="pass-toggle" onclick="togglePass()" type="button" aria-label="Toggle password visibility">
+            <svg id="eyeIcon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-signin" onclick="doLogin()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign in
+      </button>
+
+      <div class="course-badge">
+        <div class="course-dot"></div>
+        <div class="course-label">CB350 · Building Materials & Testing · Dr. Mohammed Rady</div>
+        <div class="course-dot"></div>
+      </div>
+    </div>
+
+    <!-- ── Result card ── -->
+    <div class="card result-card" id="resultCard">
+      <div id="resultInner"></div>
+    </div>
+  </div>
+
+  <script>
+    const TUTOR_EMAIL = 'perryhesham24@gmail.com';
+    const TUTOR_PASS  = '1234';
+
+    function showError(msg) {
+      const el = document.getElementById('errMsg');
+      document.getElementById('errText').textContent = msg;
+      el.classList.add('show');
+    }
+
+    function hideError() {
+      document.getElementById('errMsg').classList.remove('show');
+    }
+
+    function togglePass() {
+      const inp = document.getElementById('passIn');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    function doLogin() {
+      hideError();
+      const email = document.getElementById('emailIn').value.trim().toLowerCase();
+      const pass  = document.getElementById('passIn').value;
+
+      if (!email) { showError('Please enter your email address.'); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); return; }
+      if (!pass)  { showError('Please enter your password.'); return; }
+
+      const isTutorEmail = email === TUTOR_EMAIL.toLowerCase();
+
+      // Tutor must use correct password
+      if (isTutorEmail && pass !== TUTOR_PASS) {
+        showError('Incorrect password. Please try again.');
+        return;
+      }
+
+      // Students: any email (not tutor) + any non-empty password
+      const role = isTutorEmail ? 'tutor' : 'student';
+      showResult(email, role);
+    }
+
+    function showResult(email, role) {
+      document.getElementById('loginCard').style.display = 'none';
+      const rc = document.getElementById('resultCard');
+      rc.style.display = 'block';
+
+      if (role === 'tutor') {
+        document.getElementById('resultInner').innerHTML = `
+          <div class="role-pill tutor">
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            Tutor Access
+          </div>
+          <div class="role-icon-wrap tutor-icon">🏫</div>
+          <div class="result-name">Dr. Perry Hesham</div>
+          <div class="result-desc">You're signed in as a <strong style="color:rgba(236,233,227,0.7)">Tutor</strong>.<br>Create quizzes, manage rooms &amp; view leaderboards.</div>
+          <a class="btn-portal tutor-btn" href="tutor.html">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Open Tutor Portal
+          </a>
+          <button class="btn-back" onclick="goBack()">← Switch account</button>
+        `;
+      } else {
+        const rawName = email.split('@')[0].replace(/[._\-]/g, ' ');
+        const name = rawName.replace(/\b\w/g, c => c.toUpperCase());
+        document.getElementById('resultInner').innerHTML = `
+          <div class="role-pill student">
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+            Student Access
+          </div>
+          <div class="role-icon-wrap student-icon">🎓</div>
+          <div class="result-name">${name}</div>
+          <div class="result-desc">You're signed in as a <strong style="color:rgba(236,233,227,0.7)">Student</strong>.<br>Enter your tutor's room code to join a live quiz.</div>
+          <a class="btn-portal student-btn" href="student.html">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Open Student Portal
+          </a>
+          <button class="btn-back" onclick="goBack()">← Switch account</button>
+        `;
+      }
+    }
+
+    function goBack() {
+      document.getElementById('resultCard').style.display = 'none';
+      document.getElementById('loginCard').style.display = 'block';
+      document.getElementById('emailIn').value = '';
+      document.getElementById('passIn').value = '';
+      hideError();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+  </script>
+</body>
+</html>
