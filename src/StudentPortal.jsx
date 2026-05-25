@@ -257,7 +257,111 @@ body { background: #0A0C10; }
   margin: 0 auto;
 }
 @keyframes spin { to { transform: rotate(360deg) } }
+
+/* ── Admin Modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(10,12,16,0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  animation: mFadeIn 0.2s ease;
+}
+@keyframes mFadeIn { from { opacity:0 } to { opacity:1 } }
+.modal-card {
+  background: rgba(18,22,30,0.98);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 22px;
+  padding: 2.25rem 2rem;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.04);
+  animation: mSlideUp 0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes mSlideUp {
+  from { opacity:0; transform: translateY(28px) scale(0.96) }
+  to   { opacity:1; transform: translateY(0) scale(1) }
+}
+.m-logo { display:flex; align-items:center; gap:10px; margin-bottom:1.75rem; }
+.m-mark {
+  width:40px; height:40px;
+  background: linear-gradient(135deg,#60A5FA 0%,#3B82F6 100%);
+  border-radius:11px; display:flex; align-items:center; justify-content:center;
+  font-size:18px; font-weight:900; color:#0A0C10; letter-spacing:-1px;
+  box-shadow: 0 0 0 1px rgba(96,165,250,0.3), 0 6px 18px rgba(96,165,250,0.22);
+}
+.m-wordmark { font-size:20px; font-weight:800; letter-spacing:-0.5px; color:#ECE9E3; }
+.m-wordmark em { color:#60A5FA; font-style:normal; }
+.m-title { font-size:24px; font-weight:800; letter-spacing:-0.4px; color:#ECE9E3; margin-bottom:4px; }
+.m-sub { font-size:13px; color:rgba(236,233,227,0.38); font-weight:500; margin-bottom:1.75rem; }
+.m-field { margin-bottom:1.1rem; }
+.m-field label {
+  display:block; font-size:10.5px; font-weight:700; letter-spacing:0.9px;
+  text-transform:uppercase; color:rgba(236,233,227,0.42); margin-bottom:7px;
+}
+.m-input-wrap { position:relative; }
+.m-icon {
+  position:absolute; left:13px; top:50%; transform:translateY(-50%);
+  opacity:0.28; pointer-events:none; display:flex; align-items:center;
+}
+.m-input {
+  width:100%; padding:13px 14px 13px 43px;
+  background:rgba(255,255,255,0.05); border:1.5px solid rgba(255,255,255,0.09);
+  border-radius:11px; color:#ECE9E3; font-family:'Outfit',sans-serif;
+  font-size:15px; font-weight:500; outline:none;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.m-input:focus {
+  border-color:rgba(96,165,250,0.55);
+  background:rgba(96,165,250,0.05);
+  box-shadow:0 0 0 3px rgba(96,165,250,0.1);
+}
+.m-input::placeholder { color:rgba(236,233,227,0.18); }
+.m-pw-toggle {
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer; padding:4px;
+  color:rgba(236,233,227,0.28); display:flex; align-items:center;
+  transition:color 0.15s;
+}
+.m-pw-toggle:hover { color:rgba(236,233,227,0.65); }
+.m-error {
+  display:flex; align-items:flex-start; gap:9px; padding:11px 14px;
+  background:rgba(239,68,68,0.09); border:1px solid rgba(239,68,68,0.22);
+  border-radius:10px; font-size:13px; color:#FCA5A5;
+  margin-bottom:1.1rem; font-weight:500; line-height:1.4;
+}
+.m-signin-btn {
+  width:100%; padding:13.5px;
+  font-size:15px; font-weight:700; font-family:'Outfit',sans-serif; letter-spacing:0.2px;
+  background:linear-gradient(135deg,#60A5FA 0%,#3B82F6 100%);
+  color:#0A0C10; border:none; border-radius:11px; cursor:pointer;
+  transition:opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow:0 4px 20px rgba(96,165,250,0.3);
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin-top:0.25rem;
+}
+.m-signin-btn:hover { opacity:0.9; box-shadow:0 6px 28px rgba(96,165,250,0.42); }
+.m-signin-btn:active { transform:scale(0.98); }
+.m-cancel-btn {
+  width:100%; padding:10px; margin-top:0.55rem;
+  background:none; border:none; font-family:'Outfit',sans-serif;
+  font-size:13px; font-weight:600; color:rgba(236,233,227,0.28);
+  cursor:pointer; transition:color 0.15s;
+}
+.m-cancel-btn:hover { color:rgba(236,233,227,0.55); }
+.m-footer {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin-top:1.5rem; padding-top:1.25rem;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+.m-dot { width:5px; height:5px; border-radius:50%; background:#60A5FA; opacity:0.35; }
+.m-foot-lbl { font-size:11px; font-weight:600; color:rgba(236,233,227,0.25); letter-spacing:0.4px; }
 `;
+
+const TUTORS = [
+  { email: "perryhesham24@gmail.com", username: null,            name: "Dr. Perry Hesham", pass: "1234"    },
+  { email: null,                      username: "Mohamed Rady",  name: "Mohamed Rady",     pass: "AAST555" },
+];
 
 export default function StudentPortal() {
   const [screen,      setScreen]      = useState("join");
@@ -274,6 +378,14 @@ export default function StudentPortal() {
   const [feedback,    setFeedback]    = useState(null);
   const [streak,      setStreak]      = useState(0);
   const [leaderboard, setLeaderboard] = useState([]);
+
+  /* admin modal */
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [adminId,   setAdminId]   = useState("");
+  const [adminPass, setAdminPass] = useState("");
+  const [adminErr,  setAdminErr]  = useState("");
+  const [adminPw,   setAdminPw]   = useState(false);
+
   const channelRef = useRef(null);
   const nameRef    = useRef(name);
   const scoreRef   = useRef(score);
@@ -410,6 +522,35 @@ export default function StudentPortal() {
     setStreak(0); setLeaderboard([]);
   }
 
+  function openAdmin() {
+    setAdminId(""); setAdminPass(""); setAdminErr(""); setAdminPw(false);
+    setAdminOpen(true);
+  }
+
+  function closeAdmin() {
+    setAdminOpen(false);
+    setAdminId(""); setAdminPass(""); setAdminErr(""); setAdminPw(false);
+  }
+
+  function doAdminLogin() {
+    setAdminErr("");
+    const id = adminId.trim();
+    if (!id)        { setAdminErr("Please enter your email or username."); return; }
+    if (!adminPass) { setAdminErr("Please enter your password."); return; }
+
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id);
+    let matched = null;
+    for (const t of TUTORS) {
+      if (isEmail  && t.email    && t.email.toLowerCase()    === id.toLowerCase()) { matched = t; break; }
+      if (!isEmail && t.username && t.username.toLowerCase() === id.toLowerCase()) { matched = t; break; }
+    }
+
+    if (!matched)             { setAdminErr("No admin account found with that email or username."); return; }
+    if (adminPass !== matched.pass) { setAdminErr("Incorrect password. Please try again."); return; }
+
+    window.location.href = "tutor.html";
+  }
+
   const currentQ = session?.questions?.[qIdx];
   const totalQ   = session?.questions?.length || 0;
   const myRank   = leaderboard.findIndex(s => s.student_name === name) + 1;
@@ -428,7 +569,7 @@ export default function StudentPortal() {
               <div className="topbar">
                 <div className="wordmark">CB350 <em>QuizHub</em></div>
                 <div className="chip chip-blue">STUDENT PORTAL</div>
-                <a href="index.html" className="btn-admin">Admin</a>
+                <button className="btn-admin" onClick={openAdmin}>Admin</button>
               </div>
 
               <div className="card card-blue" style={{textAlign:"center", padding:"1.75rem 1.25rem", marginBottom:"1.5rem"}}>
@@ -635,6 +776,86 @@ export default function StudentPortal() {
 
         </div>
       </div>
+
+      {/* ── ADMIN LOGIN MODAL ─────────────────────────────── */}
+      {adminOpen && (
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeAdmin()}>
+          <div className="modal-card">
+
+            <div className="m-logo">
+              <div className="m-mark">Q</div>
+              <div className="m-wordmark">Quiz<em>Hub</em></div>
+            </div>
+
+            <div className="m-title">Admin Sign In</div>
+            <div className="m-sub">Tutor &amp; admin access · <strong style={{color:"rgba(236,233,227,0.55)"}}>CB350</strong></div>
+
+            {adminErr && (
+              <div className="m-error">
+                <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" style={{flexShrink:0, marginTop:1}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                {adminErr}
+              </div>
+            )}
+
+            <div className="m-field">
+              <label>Email or Username</label>
+              <div className="m-input-wrap">
+                <span className="m-icon">
+                  <svg width="17" height="17" fill="none" stroke="#ECE9E3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                </span>
+                <input
+                  type="text"
+                  className="m-input"
+                  value={adminId}
+                  onChange={e => setAdminId(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && doAdminLogin()}
+                  placeholder="email or username"
+                  autoComplete="username"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="m-field">
+              <label>Password</label>
+              <div className="m-input-wrap">
+                <span className="m-icon">
+                  <svg width="17" height="17" fill="none" stroke="#ECE9E3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input
+                  type={adminPw ? "text" : "password"}
+                  className="m-input"
+                  value={adminPass}
+                  onChange={e => setAdminPass(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && doAdminLogin()}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                />
+                <button className="m-pw-toggle" type="button" onClick={() => setAdminPw(p => !p)} aria-label="Toggle password">
+                  {adminPw
+                    ? <svg width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    : <svg width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  }
+                </button>
+              </div>
+            </div>
+
+            <button className="m-signin-btn" onClick={doAdminLogin}>
+              <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              Sign in
+            </button>
+
+            <button className="m-cancel-btn" onClick={closeAdmin}>Cancel</button>
+
+            <div className="m-footer">
+              <div className="m-dot" />
+              <div className="m-foot-lbl">CB350 · Building Materials &amp; Testing</div>
+              <div className="m-dot" />
+            </div>
+
+          </div>
+        </div>
+      )}
     </>
   );
 }

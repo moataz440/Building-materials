@@ -61,3 +61,4 @@ alter table student_answers  enable row level security;
 create policy "Allow all" on sessions         for all using (true) with check (true);
 create policy "Allow all" on session_students for all using (true) with check (true);
 create policy "Allow all" on student_answers  for all using (true) with check (true);
+
