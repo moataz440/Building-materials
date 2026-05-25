@@ -115,6 +115,16 @@ body { background: #0A0C10; }
 .btn-blue:hover { background: #93C5FD; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(96,165,250,0.2); }
 .btn-ghost { background: rgba(255,255,255,0.04); color: #ECE9E3; border: 1px solid rgba(255,255,255,0.1); }
 .btn-ghost:hover { background: rgba(255,255,255,0.09); }
+.btn-admin {
+  margin-left: auto; background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09); border-radius: 7px;
+  padding: 5px 13px; font-size: 11px; font-weight: 600;
+  color: rgba(236,233,227,0.35); text-decoration: none;
+  font-family: 'Outfit', sans-serif; cursor: pointer;
+  letter-spacing: 0.5px; transition: all 0.15s;
+  display: inline-flex; align-items: center;
+}
+.btn-admin:hover { background: rgba(255,255,255,0.09); color: rgba(236,233,227,0.65); }
 
 /* ── Error ── */
 .err {
@@ -283,10 +293,24 @@ export default function StudentPortal() {
     if (se || !sess) { setError("Room not found — double-check the code."); return; }
     if (sess.status === "done") { setError("This session has already ended."); return; }
 
+    // Allow reconnection from the same browser session, but block duplicate names otherwise
+    const sessionKey = `joined_${sess.id}_${tn}`;
+    const alreadyJoined = localStorage.getItem(sessionKey) === "1";
+
+    if (!alreadyJoined) {
+      const { data: taken } = await sb.from("session_students")
+        .select("student_name").eq("session_id", sess.id).eq("student_name", tn).maybeSingle();
+      if (taken) {
+        setError("This name is already taken in this session. Please choose a different name.");
+        return;
+      }
+    }
+
     const { error: ie } = await sb.from("session_students")
       .upsert({ session_id: sess.id, student_name: tn, score: 0 }, { onConflict: "session_id,student_name" });
     if (ie && ie.code !== "23505") { setError("Could not join session. Please try again."); return; }
 
+    localStorage.setItem(sessionKey, "1");
     setSession(sess);
     setCode(tc);
 
@@ -404,6 +428,7 @@ export default function StudentPortal() {
               <div className="topbar">
                 <div className="wordmark">CB350 <em>QuizHub</em></div>
                 <div className="chip chip-blue">STUDENT PORTAL</div>
+                <a href="index.html" className="btn-admin">Admin</a>
               </div>
 
               <div className="card card-blue" style={{textAlign:"center", padding:"1.75rem 1.25rem", marginBottom:"1.5rem"}}>
@@ -417,16 +442,6 @@ export default function StudentPortal() {
               {error && <div className="err">{error}</div>}
 
               <div className="field">
-                <label>Your full name</label>
-                <input
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && joinSession()}
-                  placeholder="e.g. Ahmed Hassan"
-                  autoComplete="name"
-                />
-              </div>
-              <div className="field">
                 <label>Room code</label>
                 <input
                   className="code-input"
@@ -437,6 +452,16 @@ export default function StudentPortal() {
                   maxLength={6}
                   autoComplete="off"
                   spellCheck="false"
+                />
+              </div>
+              <div className="field">
+                <label>Your name</label>
+                <input
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && joinSession()}
+                  placeholder="e.g. Ahmed Hassan"
+                  autoComplete="name"
                 />
               </div>
               <button className="btn btn-blue" onClick={joinSession}>Join Session</button>

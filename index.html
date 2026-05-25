@@ -402,8 +402,8 @@
 
     <!-- ── Login card ── -->
     <div class="card" id="loginCard">
-      <div class="card-title">Welcome back</div>
-      <div class="card-sub">Sign in to access your portal · <strong>CB350</strong></div>
+      <div class="card-title">Admin Sign In</div>
+      <div class="card-sub">Tutor &amp; admin access · <strong>CB350</strong></div>
 
       <div class="error-msg" id="errMsg">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -411,10 +411,10 @@
       </div>
 
       <div class="field">
-        <label for="emailIn">Email address</label>
+        <label for="emailIn">Email or Username</label>
         <div class="input-wrap">
           <svg class="input-icon" width="18" height="18" fill="none" stroke="#ECE9E3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
-          <input type="email" id="emailIn" placeholder="your@email.com" autocomplete="email" />
+          <input type="text" id="emailIn" placeholder="email or username" autocomplete="username" />
         </div>
       </div>
 
@@ -448,8 +448,11 @@
   </div>
 
   <script>
-    const TUTOR_EMAIL = 'perryhesham24@gmail.com';
-    const TUTOR_PASS  = '1234';
+    // Admin/Tutor credentials — login by email OR username
+    const TUTORS = [
+      { email: 'perryhesham24@gmail.com', username: null,          name: 'Dr. Perry Hesham', pass: '1234'    },
+      { email: null,                       username: 'Mohamed Rady', name: 'Mohamed Rady',     pass: 'AAST555' },
+    ];
 
     function showError(msg) {
       const el = document.getElementById('errMsg');
@@ -468,64 +471,52 @@
 
     function doLogin() {
       hideError();
-      const email = document.getElementById('emailIn').value.trim().toLowerCase();
-      const pass  = document.getElementById('passIn').value;
+      const identifier = document.getElementById('emailIn').value.trim();
+      const pass       = document.getElementById('passIn').value;
 
-      if (!email) { showError('Please enter your email address.'); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); return; }
-      if (!pass)  { showError('Please enter your password.'); return; }
+      if (!identifier) { showError('Please enter your email or username.'); return; }
+      if (!pass)       { showError('Please enter your password.'); return; }
 
-      const isTutorEmail = email === TUTOR_EMAIL.toLowerCase();
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
 
-      // Tutor must use correct password
-      if (isTutorEmail && pass !== TUTOR_PASS) {
+      // Match against tutor list by email or username
+      let matched = null;
+      for (const t of TUTORS) {
+        if (isEmail && t.email && t.email.toLowerCase() === identifier.toLowerCase()) { matched = t; break; }
+        if (!isEmail && t.username && t.username.toLowerCase() === identifier.toLowerCase()) { matched = t; break; }
+      }
+
+      if (!matched) {
+        showError('No admin account found with that email or username.');
+        return;
+      }
+      if (pass !== matched.pass) {
         showError('Incorrect password. Please try again.');
         return;
       }
 
-      // Students: any email (not tutor) + any non-empty password
-      const role = isTutorEmail ? 'tutor' : 'student';
-      showResult(email, role);
+      showResult(matched.name);
     }
 
-    function showResult(email, role) {
+    function showResult(name) {
       document.getElementById('loginCard').style.display = 'none';
       const rc = document.getElementById('resultCard');
       rc.style.display = 'block';
 
-      if (role === 'tutor') {
-        document.getElementById('resultInner').innerHTML = `
-          <div class="role-pill tutor">
-            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-            Tutor Access
-          </div>
-          <div class="role-icon-wrap tutor-icon">🏫</div>
-          <div class="result-name">Dr. Perry Hesham</div>
-          <div class="result-desc">You're signed in as a <strong style="color:rgba(236,233,227,0.7)">Tutor</strong>.<br>Create quizzes, manage rooms &amp; view leaderboards.</div>
-          <a class="btn-portal tutor-btn" href="tutor.html">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            Open Tutor Portal
-          </a>
-          <button class="btn-back" onclick="goBack()">← Switch account</button>
-        `;
-      } else {
-        const rawName = email.split('@')[0].replace(/[._\-]/g, ' ');
-        const name = rawName.replace(/\b\w/g, c => c.toUpperCase());
-        document.getElementById('resultInner').innerHTML = `
-          <div class="role-pill student">
-            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
-            Student Access
-          </div>
-          <div class="role-icon-wrap student-icon">🎓</div>
-          <div class="result-name">${name}</div>
-          <div class="result-desc">You're signed in as a <strong style="color:rgba(236,233,227,0.7)">Student</strong>.<br>Enter your tutor's room code to join a live quiz.</div>
-          <a class="btn-portal student-btn" href="student.html">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            Open Student Portal
-          </a>
-          <button class="btn-back" onclick="goBack()">← Switch account</button>
-        `;
-      }
+      document.getElementById('resultInner').innerHTML = `
+        <div class="role-pill tutor">
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          Admin Access
+        </div>
+        <div class="role-icon-wrap tutor-icon">🏫</div>
+        <div class="result-name">${name}</div>
+        <div class="result-desc">You're signed in as an <strong style="color:rgba(236,233,227,0.7)">Admin</strong>.<br>Create quizzes, manage rooms &amp; view leaderboards.</div>
+        <a class="btn-portal tutor-btn" href="tutor.html">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Open Tutor Portal
+        </a>
+        <button class="btn-back" onclick="goBack()">← Switch account</button>
+      `;
     }
 
     function goBack() {
